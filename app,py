@@ -46,9 +46,15 @@ def about():
 def contact():
     return render_template('contact.html')
 
+@ app.route('/api/jobs/<int:index>')
+def get_job(index):
+    return jsonify(jobs[index])
+
 @ app.route('/api/jobs')
 def get_jobs():
     return jsonify(jobs)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
