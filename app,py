@@ -1,6 +1,37 @@
-from flask import Flask, render_template
+from flask import Flask, render_template,jsonify
 
 app = Flask(__name__)
+
+jobs=[
+    {
+        'title':'Data analyst',
+        'company':'Google',
+        'year':2017,
+        'salary': 100000,
+        'location':'Bangalore'
+    },
+    {
+        'title':'Front-end developer',
+        'company':'Facebook',
+        'year':2018,
+        'salary': 120000,
+        'location':'Hyderabad'
+    },
+    {
+        'title':'full-stack developer',
+        'company':'Amazon',
+        'year':2019,
+        'salary':110000, 
+        'location':'Chennai'
+    },
+    {
+        'title':'ui/ux designer',
+        'company':'Microsoft',
+        'year':2020,
+        'salary': 200000,
+        'location':'Mumbai'
+    },
+]
 
 @app.route('/')
 def home():
@@ -8,11 +39,16 @@ def home():
 
 @app.route('/about')
 def about():
-    return render_template('About.html')
+    return render_template('About.html',srm=jobs,
+                        company_name='Kisan')
 
-@app.route('/contact')
+@ app.route('/contact')
 def contact():
     return render_template('contact.html')
+
+@ app.route('/api/jobs')
+def get_jobs():
+    return jsonify(jobs)
 
 if __name__ == '__main__':
     app.run(debug=True)
