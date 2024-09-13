@@ -1,2 +1,109 @@
 Flask
 gunicorn
+
+
+# MOngodb commands for CRUD operations(database)
+View all databases
+show databases
+
+Create a new or switch databases
+use dbname
+
+view current database
+db
+
+Delete a database
+db.dropDatabase()
+
+
+# MOngodb commands for CRUD operations(collection)
+show collections
+show collections
+
+Create a collection named (collection_name)
+db.createCollection('collection_name')
+
+Insert a document into a collection
+db.collection_name.insert({key:value})
+
+Insert multiple documents into a collection
+db.collection_name.insertMany([{key:value},{key:value}])
+
+Find all documents in a collection
+db.collection_name.find()
+
+
+Create a collection named (collection_name)
+db.createCollection('collection_name')
+
+delete a collection
+db.collection_name.drop()
+
+
+Update a document in a collection
+db.collection_name.update({key:value},{$set:{key:value}})
+
+Delete a document from a collection
+db.collection_name.remove({key:value})
+
+Delete all documents from a collection
+db.collection_name.remove({})
+
+# MOngodb commands for Rows
+Inset a row
+db.collection_name.insert({key:value}) 
+
+# ### example ##
+db.comments.insert({'name':'Abishek','comment':'This is a comment','language':'English','likes':0,'hates':0})
+
+insert multiple rows
+db.collection_name.insertMany([{key:value},{key:value}])
+
+### example ##
+db.comments.insertMany([{'name':'Abishek','comment':'This is a comment','language':'English','likes':0,'hates':0},{'name':'Yogi ji','comment':'This is a comment','language':'Java','likes':1000,'hates':101},
+{'name':'Modu ji','comment':'This is  comment','language':'Pyhton','likes':1000250,'hates':0259}])
+
+Show all rows in a collection(pretty)
+db.collection_name.find().pretty()
+
+
+Search in a Mpongodb database
+db.collection_name.find({key:value})
+
+### example ##
+db.comments.find({'name':'Abishek'})
+
+
+Limit the number of rows returned
+db.collection_name.find().limit(2)
+
+Sort the rows returned
+db.collection_name.find().sort({key:1})
+
+### example ##
+db.comments.find().sort({'likes':1})
+
+Count the number of rows returned
+db.collection_name.find().count()
+
+### example ##
+db.comments.find().count()
+
+Find the first row matching  in a collection
+db.collection_name.findOne({key:value
+
+### example ##
+db.comments.findOne({'name':'Abishek'})
+
+Update a row in a collection
+db.collection_name.update({key:value},{$set:{key:value}})
+
+### example ##
+
+db.comments.update({'name':'Abishek'},{$set:{'likes':1000}})
+
+Delete a row from a collection
+db.collection_name.remove({key:value})
+
+### example ##
+db.comments.remove({'name':'Abishek'})

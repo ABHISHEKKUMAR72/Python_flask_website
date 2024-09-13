@@ -1,13 +1,16 @@
 <div class="border-bottom row" style="margin-bottom: 16px; padding-bottom: 8px;">
     <div class="col-9">
-        <h4 style="color: rgb(105, 166, 219); margin-bottom: 4px;">{{ job['title'] }}</h4>
+        <h4 style="color: rgb(18, 122, 213); margin-bottom: 4px;">{{ job['title'] }}</h4>
+        <div><b>Company: {{ job['company'] }}</b></div>
         <div><b>Year: {{ job['year'] }}</b></div>
         <div><b>Location: {{ job['location'] }}</b></div>
         {% if 'salary' in job %}
-        <div><b>Salary: {{ job['salary'] }}</b></div>
+            <div><b>Salary: {{ job['salary'] }}</b></div>
         {% endif %}
     </div>
     <div class="col-3 text-end">
-        <button type="button" class="btn btn-outline-primary" style="margin-top: 8px;">Apply Now</button>
+        <a href="{{ url_for('apply', job_title=job['title']) }}">
+            <button type="button" class="btn btn-outline-primary" style="margin-top: 8px;">Apply Now</button>
+        </a>
     </div>
 </div>

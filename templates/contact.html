@@ -1,33 +1,87 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Me</title>
+    <title>Contact Us</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </head>
+
 <body>
-    <header>
-        <h1>Contact Me</h1>
-    </header>
-    <main>
-        <form action="/submit_contact" method="post">
-            <div>
-                <label for="name">Name:</label>
-                <input type="text" id="name" name="name" required>
+
+    {% include 'nav.html' %}
+
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Get in Touch</h1>
+
+        <!-- Contact Form -->
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <form action="{{ url_for('contact') }}" method="post" class="bg-light p-4 border rounded shadow">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name:</label>
+                        <input type="text" id="name" name="name" class="form-control" placeholder="Enter your name"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email"
+                            required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message:</label>
+                        <textarea id="message" name="message" rows="4" class="form-control"
+                            placeholder="Write your message" required></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">Submit</button>
+                    </div>
+                </form>
             </div>
-            <div>
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required>
+        </div>
+
+        <!-- Address and Contact Information -->
+        <div class="row mt-5">
+            <div class="col-md-6 text-center">
+                <h4>Our Office</h4>
+                <p>Niet headquater, Greater Noida, India</p>
+                <p>Email: Network@company.com</p>
+                <p>Phone: 7277017389</p>
             </div>
-            <div>
-                <label for="message">Message:</label>
-                <textarea id="message" name="message" rows="4" required></textarea>
+            <div class="col-md-6 text-center">
+                <!-- Optional: Embed Google Map or OpenStreetMap for Office Location -->
+                <iframe width="425" height="350"
+                    src="https://www.openstreetmap.org/export/embed.html?bbox=77.48824596405031%2C28.46124959702239%2C77.49326705932619%2C28.46426784029602&amp;layer=mapnik"
+                    style="border: 1px solid black"></iframe><br /><small><a
+                        href="https://www.openstreetmap.org/#map=18/28.462757/77.490757">View Larger Map</a></small>
             </div>
-            <div>
-                <button type="submit">Submit</button>
-            </div>
-        </form>
-    </main>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="text-center mt-5">
+            <h4>Follow Us</h4>
+            <a href="https://www.facebook.com" class="btn btn-primary me-2">
+                <i class="bi bi-facebook"></i> Facebook
+            </a>
+            <a href="https://www.twitter.com" class="btn btn-info me-2">
+                <i class="bi bi-twitter"></i> Twitter
+            </a>
+            <a href="https://www.linkedin.com" class="btn btn-secondary">
+                <i class="bi bi-linkedin"></i> LinkedIn
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Optional: Include Footer -->
+    {% include 'footer.html' %}
+
 </body>
-</html> 
+
+</html>

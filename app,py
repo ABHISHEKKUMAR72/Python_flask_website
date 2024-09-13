@@ -1,37 +1,60 @@
-from flask import Flask, render_template,jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from pymongo import MongoClient
+import os
 
 app = Flask(__name__)
 
-jobs=[
+# Connect to MongoDB
+client = MongoClient('mongodb://localhost:27017/')
+db = client['Python_Flask']  # Database name
+contacts_collection = db['contacts']  # Collection for contacts
+applications_collection = db['applications']  # Collection for job applications
+
+# Job data
+jobs = [
     {
-        'title':'Data analyst',
-        'company':'Google',
-        'year':2017,
+        'title': 'Data analyst',
+        'company': 'Google',
+        'year': 2017,
         'salary': 100000,
-        'location':'Bangalore'
+        'location': 'Bangalore'
     },
     {
-        'title':'Front-end developer',
-        'company':'Facebook',
-        'year':2018,
+        'title': 'Front-end developer',
+        'company': 'Facebook',
+        'year': 2018,
         'salary': 120000,
-        'location':'Hyderabad'
+        'location': 'Hyderabad'
     },
     {
-        'title':'full-stack developer',
-        'company':'Amazon',
-        'year':2019,
-        'salary':110000, 
-        'location':'Chennai'
+        'title': 'Full-stack developer',
+        'company': 'Amazon',
+        'year': 2019,
+        'salary': 110000,
+        'location': 'Chennai'
     },
     {
-        'title':'ui/ux designer',
-        'company':'Microsoft',
-        'year':2020,
+        'title': 'UI/UX designer',
+        'company': 'Microsoft',
+        'year': 2020,
         'salary': 200000,
-        'location':'Mumbai'
+        'location': 'Mumbai'
     },
 ]
+
+# Define the path for the uploads folder
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = 'supersecretkey'  # For flashing messages
+
+
+
+# Allow only certain file extensions
+ALLOWED_EXTENSIONS = {'pdf', 'doc', 'docx'}
+
+# Check if the uploaded file is allowed
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/')
 def home():
@@ -39,22 +62,102 @@ def home():
 
 @app.route('/about')
 def about():
-    return render_template('About.html',srm=jobs,
-                        company_name='Kisan')
+    return render_template('About.html', srm=jobs, company_name='Kisan')
 
-@ app.route('/contact')
+@app.route('/contact', methods=['GET', 'POST'])
 def contact():
+    if request.method == 'POST':
+        name = request.form.get('name')
+        email = request.form.get('email')
+        message = request.form.get('message')
+        
+        # Debugging print statements
+        print(f"Name: {name}, Email: {email}, Message: {message}")
+        
+        try:
+            result = contacts_collection.insert_one({
+                'name': name,
+                'email': email,
+                'message': message
+            })
+            if result.acknowledged:
+                print(f"Contact added: {result.inserted_id}")
+            else:
+                print("Failed to insert contact")
+        except Exception as e:
+            print(f"Error inserting contact: {e}")
+
+        return redirect(url_for('thank_you'))
+
     return render_template('contact.html')
 
-@ app.route('/api/jobs/<int:index>')
-def get_job(index):
-    return jsonify(jobs[index])
 
-@ app.route('/api/jobs')
+@app.route('/thank_you')
+def thank_you():
+    return "Thank you for getting in touch! We'll respond soon."
+
+@app.route('/apply/<job_title>', methods=['GET', 'POST'])
+def apply(job_title):
+    selected_job = next((job for job in jobs if job['title'] == job_title), None)
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        address = request.form.get('address')
+        experience = request.form.get('experience')
+        resume = request.files.get('resume')
+
+        # Debugging print statements
+        print(f"Name: {name}, Address: {address}, Experience: {experience}")
+        if resume:
+            print(f"Resume: {resume.filename}")
+
+        if resume and allowed_file(resume.filename):
+            resume_filename = resume.filename
+            resume.save(os.path.join(app.config['UPLOAD_FOLDER'], resume_filename))
+            
+            try:
+                result = applications_collection.insert_one({
+                    'name': name,
+                    'address': address,
+                    'experience': experience,
+                    'resume': resume_filename,
+                    'job_title': job_title,
+                    'company': selected_job['company']
+                })
+                if result.acknowledged:
+                    print(f"Application added: {result.inserted_id}")
+                else:
+                    print("Failed to insert application")
+            except Exception as e:
+                print(f"Error inserting application: {e}")
+
+            return redirect(url_for('thank_you'))
+        else:
+            flash("File type not allowed. Please upload a PDF, DOC, or DOCX.")
+    
+    return render_template('apply.html', job=selected_job)
+
+@app.route('/test_insert')
+def test_insert():
+    try:
+        result = contacts_collection.insert_one({
+            'name': 'Test Name',
+            'email': 'test@example.com',
+            'message': 'Test message'
+        })
+        return f"Inserted test contact with ID: {result.inserted_id}"
+    except Exception as e:
+        return f"Error inserting test contact: {e}"
+
+
+# API for jobs
+@app.route('/api/jobs')
 def get_jobs():
     return jsonify(jobs)
 
-
-
 if __name__ == '__main__':
+    # Ensure the uploads folder exists
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
+    
     app.run(debug=True)
